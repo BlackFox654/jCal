@@ -7,7 +7,7 @@
   "description": "Multi-day, multi-month animated datepicker jQuery plugin",
   "main": [
     "dist/jCal.css",
-    "dist/jCal.min.js",
+    "dist/jCal.min.js"
   ],
   "moduleType": [],
   "keywords": [
