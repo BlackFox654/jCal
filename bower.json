@@ -1,0 +1,26 @@
+{
+  "name": "jcal",
+  "homepage": "https://github.com/BlackFox654/jCal",
+  "authors": [
+    "Mikhail Vedernikov <Mikhail.Ved@yandex.ru>"
+  ],
+  "description": "Multi-day, multi-month animated datepicker jQuery plugin",
+  "main": [
+    "dist/jCal.css",
+    "dist/jCal.min.js",
+  ],
+  "moduleType": [],
+  "keywords": [
+    "multi-month",
+    "datepicker"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src",
+    "test",
+    "tests"
+  ]
+}
