@@ -93,8 +93,7 @@
 
 /* hilight style for new month combobox pulldown for hover */
 .jCal .monthSelect {
-	/*background: #EEE url(images/eeGrad2.gif) bottom repeat-x;*/
-	background-color: #eeeeee;
+	background: #EEE url(eeGrad2.gif) bottom repeat-x;
 }
 
 /* do not edit - this enables the new month combobox selector */
@@ -112,15 +111,13 @@
 
 /* this is the hover for the month name */
 .jCal .monthNameHover {
-	background-color: #ededed;
-	/*background: #EDEDED url(double-arrow-vert.gif) center left no-repeat;*/
+	background: #EDEDED url(double-arrow-vert.gif) center left no-repeat;
 	color: #808080;
 }
 
 /* this is the hover for the year */
 .jCal .monthYearHover {
-	background-color: #ededed;
-	/*background: #EDEDED url(double-arrow-vert.gif) center right no-repeat;*/
+	background: #EDEDED url(double-arrow-vert.gif) center right no-repeat;
 	color: #808080;
 }
 
@@ -225,20 +222,24 @@
 /**/
 .jCalMo .day,
 .jCalMo .invday, .jCalMo .pday, .jCalMo .aday, .jCalMo .selectedDay, .jCalMo .dow {
-	width: 33px !important;
-	height: 26px !important;
+	/*width: 33px !important;*/
+	width: 33px;
+	/*height: 26px !important;*/
+	height: 26px;
 	border: none;
 	line-height: 26px;
 	padding: 2px 0;
 }
 
 .jCalMo .dow {
-	height: auto !important;
+	/*height: auto !important;*/
+	height: auto;
 	margin: 5px 0 6px 0;
 }
 
 .jCalMo .month {
-	width: 203px !important;
+	/*width: 203px !important;*/
+	width: 203px;
 }
 .jCalMo .month{
 	letter-spacing: 1px;
@@ -302,7 +303,8 @@
 	height: 26px;
 	padding: 2px 0;
 	top: 0;
-	background-color: rgb(153,181,224) !important;
+	/*background-color: rgb(153,181,224) !important;*/
+	background-color: rgb(153,181,224);
 	border-radius: 50%;
 	transform: scale(1.1);
 	z-index: -1;
