@@ -61,6 +61,7 @@
 			reSelectDates(target, $(opt._target).data('day'), $(opt._target).data('days'), opt);
 		if (typeof opt.drawBack == 'function') opt.drawBack()
 
+		$(target).prepend('<div class="jCal-header"><button class="jCal-btn"><span class="jcal-btn__text">Выбрать все даты</span></button></div>');
 		$(target).append('<span class="jCal-first-day first-day"></span>');
 	};
 
