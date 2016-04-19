@@ -34,7 +34,9 @@
 			dow: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],		// days of week - change this to reflect your dayOffset
 			ml: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
 			ms: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-			_target: target										// target DOM element - no need to set extend this variable
+			_target: target,
+			onReset: function () {
+			}
 		}, opt);
 		opt.day = new Date(opt.day.getFullYear(), opt.day.getMonth(), 1);
 		if (!$(opt._target).data('days')) $(opt._target).data('days', opt.days);
@@ -61,8 +63,14 @@
 			reSelectDates(target, $(opt._target).data('day'), $(opt._target).data('days'), opt);
 		if (typeof opt.drawBack == 'function') opt.drawBack()
 
-		$(target).prepend('<div class="jCal-header"><button class="jCal-btn"><span class="jcal-btn__text">Выбрать все даты</span></button></div>');
+		$(target).prepend('<div class="jCal-header"><button class="jCal-btn jCal-reset"><span class="jcal-btn__text">Выбрать все даты</span></button></div>');
 		$(target).append('<span class="jCal-first-day first-day"></span>');
+
+
+		$(target).find('.jCal-reset').bind('click', $.extend({}, opt), function (e) {
+			$(target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
+			opt.onReset();
+		});
 	};
 
 	function drawCalControl(target, opt) {
@@ -133,6 +141,7 @@
 									$(this).toggleClass('monthSelectHover');
 							});
 						if (typeof opt.drawBack == 'function') opt.drawBack();
+
 					});
 		$(target).find('.jCal .left').on('click', $.extend({}, opt),
 			function (e) {
@@ -251,8 +260,6 @@
 		$(target).find('div[id^=' + opt.cID + 'd]:first, div[id^=' + opt.cID + 'd]:nth-child(7n+2)').before('<br style="clear:both;" />');
 
 		$(target).find('div[id^=' + opt.cID + 'd_]:not(.invday)').bind("mouseover mouseout click", $.extend({}, opt), function (e) {
-
-
 
 			if ($('.jCalMask', e.data._target).length > 0) {
 				return false;
