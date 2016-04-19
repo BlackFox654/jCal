@@ -313,3 +313,22 @@
 .jCalMo .first-day.hidden {
 	display: none;
 }
+
+.jCal-header{
+	margin-bottom: 17px;
+	padding-bottom: 12px;
+	border-bottom: 1px #d1d1d1 solid;
+	text-align: left;
+}
+
+.jCal-btn{
+	width: 160px;
+	background-color: #99b5e0;
+	box-shadow:0 2px 8px rgba(0, 0, 0, 0.09);
+	border-radius: 10px;
+	color: #ffffff;
+	border: none;
+}
+.jCal-btn__text{
+	font-size: 12px;
+}
