@@ -57,8 +57,6 @@
 					}
 				));
 			});
-		$('.jCalMo').first().addClass('jCalMo_first');
-		$('.jCalMo').last().addClass('jCalMo_last');
 		if ($(opt._target).data('day') && $(opt._target).data('days'))
 			reSelectDates(target, $(opt._target).data('day'), $(opt._target).data('days'), opt);
 		if (typeof opt.drawBack == 'function') opt.drawBack()
