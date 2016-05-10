@@ -332,3 +332,7 @@
 .jCal-btn__text{
 	font-size: 12px;
 }
+
+.day.day_past {
+	opacity: .2;
+}

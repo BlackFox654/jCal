@@ -71,8 +71,56 @@
 			$(target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
 			opt.onReset();
 		});
+
+
+
+		var currentDate = new Date().getDate();
+		var $days = $('.jCalMo').first().find('.day');
+		$days.each(function (i) {
+			var $this = $(this);
+			var iDay = +$this.text();
+			if( iDay < currentDate ) {
+				$this.addClass('day_past');
+			}
+		});
+
+		
 	};
 
+	//function bindEvents(target, opt){
+	//	var isSmall = false;
+	//	var isFull = true;
+	//	var $target = $(target);
+    //
+	//	if ($(window).width() < 720) {
+	//		var isSmall = true;
+	//		var isFull = false;
+	//	}
+    //
+	//	$(window).resize(function () {
+    //
+	//		if ($(window).width() < 720) {
+	//			if(!isSmall) {
+	//				isSmall = true;
+	//				isFull = false;
+	//				$target.empty();
+	//				$.jCal(target, opt, 1);
+	//			    console.log('isSmall');
+	//			}
+	//		} else {
+	//			if(!isFull) {
+	//				isFull = true;
+	//				isSmall = false;
+	//				$target.empty();
+	//				$.jCal(target, opt, 1);
+	//			    console.log('isFull');
+	//			}
+	//		}
+    //
+	//	//	console.log('e');
+	//	});
+	//}
+	
 	function drawCalControl(target, opt) {
 		$(target).append(
 			'<div class="jCal">' +
