@@ -241,7 +241,7 @@
 
             var hh = mD.h;
             if (opt.showMonths == 1) {
-                hh -= 35;
+                hh -= 0;
             }
 
             $(e.data._target).append('<div class="jCalSpace" style="width:' + mD.w + 'px; height:' + hh + 'px;"></div>');
@@ -296,7 +296,7 @@
             }
             var hh = mD.h;
             if (opt.showMonths == 1) {
-                hh -= 35;
+                hh -= 0;
             }
 
             $(e.data._target).append('<div class="jCalSpace" style="width:' + mD.w + 'px; height:' + hh + 'px;"></div>');
