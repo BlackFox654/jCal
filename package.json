@@ -1,0 +1,26 @@
+{
+  "name": "jCal",
+  "version": "0.0.1",
+  "description": "jCal builder",
+  "main": "gulpfile.js",
+  "scripts": {
+    "start": "gulp"
+  },
+  "author": "Aleksandr Serenko",
+  "license": "MIT",
+  "dependencies": {
+    "chokidar": "^1.5.2",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-less": "^3.1.0",
+    "gulp-load-plugins": "^1.2.4",
+    "gulp-notify": "^2.2.0",
+    "gulp-plumber": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-rimraf": "^0.2.0",
+    "gulp-util": "^3.0.7",
+    "run-sequence": "^1.2.1"
+  }
+}

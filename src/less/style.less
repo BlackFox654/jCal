@@ -1,0 +1,334 @@
+.calendar-wr {
+  position: relative;
+}
+
+.calendar {
+  position: absolute;
+  border-radius: 8px;
+  box-shadow: 2px 3.464px 7px 0px rgba(0, 0, 0, 0.29);
+  background: #ffffff;
+  padding: 25px 20px;
+
+  &:after {
+    content: '';
+    clear: both;
+    display: block;
+  }
+}
+
+.jCal {
+  height: 19px;
+  text-align: center;
+  vertical-align: top;
+}
+
+.jCalMo {
+  float: left;
+  overflow: visible;
+  text-align: center;
+  height: 100%;
+  white-space: nowrap;
+
+  &_first {
+    padding-right: 13px;
+  }
+
+  &_first .jCal .monthYear {
+    width: 105px;
+  }
+  &_first .jCal .monthName {
+    width: 86px;
+  }
+
+  &_last {
+    padding-left: 13px;
+  }
+  &_last .jCal .monthYear {
+    width: 56px;
+  }
+  &_last .jCal .monthName {
+    width: 133px;
+  }
+
+  .dow,
+  .day,
+  .pday,
+  .aday,
+  .overDay,
+  .invday,
+  .selectedDay {
+    width: 30px;
+    font-family: @FDefault;
+    font-size: 8pt;
+    color: #000000;
+    border-right: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
+    border-left: 1px solid #EEE;
+    text-align: center;
+    cursor: default;
+    /*float: left;*/
+    display: inline-block;
+  }
+
+  .dow {
+    font-size: 12px;
+  }
+
+  .day,
+  .invday {
+    height: 30px;
+    text-align: center;
+  }
+
+  .day {
+    cursor: pointer;
+    font-size: 17px;
+  }
+
+  .invday {
+    color: #808080;
+    background: #eeeeee;
+    text-decoration: line-through;
+  }
+
+  .pday,
+  .aday {
+    height: 30px;
+    background: #e3e3e3;
+    color: #CCC;
+  }
+
+  .pday,
+  .aday {
+    font-size: 17px;
+    color: #202020;
+    opacity: 0.7;
+    background: transparent;
+  }
+
+  .day,
+  .invday,
+  .pday,
+  .aday,
+  .selectedDay,
+  .dow {
+    width: 33px;
+    height: 26px;
+    border: none;
+    line-height: 26px;
+    padding: 2px 0;
+  }
+
+  .dow {
+    /*height: auto !important;*/
+    height: auto;
+    margin: 5px 0 6px 0;
+  }
+
+  .month {
+    width: 203px;
+    letter-spacing: 1px;
+  }
+
+  .day {
+    position: relative;
+    z-index: 1;
+    color: #191919;
+
+    &:before,
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 33px;
+      height: 26px;
+      padding: 2px 0;
+      top: 0;
+      left: 0;
+      z-index: -2;
+    }
+  }
+
+  .selectedDay {
+    &:hover {
+      z-index: 2;
+    }
+    &:after {
+      background: rgba(211, 222, 240, 0.5);
+    }
+    &_first:after {
+      border-radius: 50% 0 0 50%;
+    }
+    &_last:after {
+      border-radius: 0 50% 50% 0;
+      background-color: rgba(211, 222, 240, 0.5);
+    }
+  }
+  .overDay {
+    &:before {
+      background-color: rgba(211, 222, 240, 1);
+      border-radius: 0;
+    }
+    &_first {
+      z-index: 2;
+    }
+    &_first:before {
+      border-radius: 50% 0 0 50%;
+    }
+    &_last:before {
+      border-radius: 0 50% 50% 0;
+    }
+  }
+
+  .first-day {
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 33px;
+      height: 26px;
+      padding: 2px 0;
+      top: 0;
+      /*background-color: rgb(153,181,224) !important;*/
+      background-color: rgb(153, 181, 224);
+      border-radius: 50%;
+      transform: scale(1.1);
+      z-index: -1;
+    }
+    &.hidden {
+      display: none;
+    }
+  }
+
+}
+
+.jCal {
+  .month,
+  .monthSelect,
+  .monthName,
+  .monthYear {
+    line-height: 19px;
+    height: 19px;
+    text-align: center;
+    vertical-align: bottom;
+    font-family: @FDefault;
+    font-size: 8pt;
+    color: #000000;
+    cursor: pointer;
+    float: left;
+  }
+
+  .monthName {
+    padding-left: 2px;
+    padding-right: 2px;
+    text-align: right;
+    width: 92px;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #202020;
+  }
+
+  .monthYear {
+    float: right;
+    padding-left: 2px;
+    padding-right: 2px;
+    text-align: left;
+    width: 92px;
+  }
+  .month {
+    width: 192px;
+  }
+  .monthSelect {
+    /*background: #EEE url(eeGrad2.gif) bottom repeat-x;*/
+  }
+  .monthNameHover {
+    color: #808080;
+  }
+  .monthSelector {
+    position: absolute;
+    z-index: 2;
+  }
+  .monthSelectorShadow {}
+
+  .monthYearHover {
+    color: #808080;
+  }
+  .monthSelectHover {
+    background: #069;
+    color: #FFF;
+  }
+
+
+  .left {
+    width: 36px;
+    height: 19px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAATCAMAAADPoV+/AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAn1BMVEUAAACiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuO+z+z7/P63yen9/v7n7filvOS/0Ozm7fimveTD0+3+/v/j6vekvOTy9vu8zeu5y+qyxuj////v8/qxxeiuw+eqwOX8/f66zOrr8PmnvuQAAADGk1nRAAAAGXRSTlMAKo7X+NYGlP2YCbu9lSv8j/nz1JAs2Pr0wD1WjwAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAACuSURBVCjPjZLJEsIgDEDTUtu6dLOtClj3fS36//9mheJ4IMq7kJm8gSQEoMFxiUcNeB3XAYUfhBQl7Pak06c/GfiNFNE/BABx0saMT81SEkOqnWo2R65KgahgUS1X2HsEMnmuN9sdWlQGrbM/HE2cZFpJ/IzAvyRWXa43E3clZbo3tG461N2xGrfyz5xE/XgiUgGlnrjgApl4afF3ke0WWO1TQ1yMxiZjkhflO/8CzrRC9FOI0u0AAAAASUVORK5CYII=');
+    background-repeat: no-repeat;
+    background-position: 0;
+    vertical-align: middle;
+    cursor: pointer;
+    float: left;
+  }
+
+  .right {
+    width: 36px;
+    height: 19px;
+    background-repeat: no-repeat;
+    background-position: 0;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAATCAMAAADPoV+/AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAolBMVEUAAACiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuOiuuPr8Pnc5fWju+O7zev8/f7e5/Wku+S6zOr7/P7j6vekvOS2yen6+/3k6/emveTR3fHX4fPo7vj////n7fjb5PTi6vbv8/rq8Pm1yOn4+v3l7PcAAACdDnPOAAAAGXRSTlMAKo7X+NYGlP2YCbu9lSv8j/nz1JAs2Pr0wD1WjwAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxIAAAsSAdLdfvwAAACqSURBVCjPjZJnD4IwEIaPIeCgBQH1XLgnuP//b7O2aGLSgz6f3qRPcqMHILBsx0UNbsu2QOH5AZIE7Y50ulhLzxNSiA34AIw3SZxBRL2NJ9MqReBQ0myeL1RyICbLLFfrjQwx1DSz3e0PMnyl40nDuSj/pMtVw624K4nuCR/PUpbr09OJll6qpYTe0284TCGjNl7mlcMzg78LTa/A6J4ELB0MdcYoSbPP+xuQbUGNorTR5gAAAABJRU5ErkJggg==');
+    vertical-align: middle;
+    cursor: pointer;
+    float: right;
+  }
+}
+
+.jCalMask,
+.jCalMove {
+  position: absolute;
+  overflow: hidden;
+}
+
+.monthSelector {
+  clip: inherit !important;
+}
+
+.jCal-header {
+  margin-bottom: 17px;
+  padding-bottom: 12px;
+  border-bottom: 1px #d1d1d1 solid;
+  text-align: left;
+}
+
+.jCal-btn {
+  width: 160px;
+  background-color: #99b5e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  border-radius: 10px;
+  color: #ffffff;
+  border: none;
+  &__text {
+    font-size: 12px;
+  }
+
+  &_confirm,
+  &_cancel {
+    width: 100%;
+    height: 50px;
+    margin: 5px 0;
+    text-transform: uppercase;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  &_cancel {
+    background-color: #ffffff;
+    color: #678ac0;
+  }
+}
+
+.jCal-footer {
+  margin-top: 25px;
+}
+
+.day.day_past {
+  opacity: .2;
+}

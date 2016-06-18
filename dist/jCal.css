@@ -94,7 +94,7 @@
 
 /* hilight style for new month combobox pulldown for hover */
 .jCal .monthSelect {
-	background: #EEE url(eeGrad2.gif) bottom repeat-x;
+	/*background: #EEE url(eeGrad2.gif) bottom repeat-x;*/
 }
 
 /* do not edit - this enables the new month combobox selector */
@@ -112,13 +112,13 @@
 
 /* this is the hover for the month name */
 .jCal .monthNameHover {
-	background: #EDEDED url(double-arrow-vert.gif) center left no-repeat;
+	/*background: #EDEDED url(double-arrow-vert.gif) center left no-repeat;*/
 	color: #808080;
 }
 
 /* this is the hover for the year */
 .jCal .monthYearHover {
-	background: #EDEDED url(double-arrow-vert.gif) center right no-repeat;
+	/*background: #EDEDED url(double-arrow-vert.gif) center right no-repeat;*/
 	color: #808080;
 }
 
