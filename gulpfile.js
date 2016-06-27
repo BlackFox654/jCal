@@ -1,7 +1,8 @@
 'use strict';
 
-var gulp  = require('gulp');
-var $ = require('gulp-load-plugins')({
+var gulp = require('gulp');
+var fs   = require('fs');
+var $    = require('gulp-load-plugins')({
     pattern: ['gulp-*', 'run-sequence', 'chokidar', 'path']
 });
 
@@ -18,7 +19,7 @@ var config = {
         file: 'style.css'
     },
     build: {
-        folder: 'dist/css',
+        folder: 'dist',
         file: 'jCal.css'
     }
 };
@@ -53,15 +54,22 @@ gulp.task('serve', function(cb) {
     );
 });
  
-gulp.task('minify', function() {
+gulp.task('build:css', function() {
+    return gulp.src(config.out.folder + '/' + config.out.file)
+        .pipe($.rename(config.build.file))
+        .pipe(gulp.dest(config.build.folder));
+});
 
+gulp.task('build:js', function() {
+    return gulp.src('src/js/main.js')
+        .pipe($.rename('jCal.js'))
+        .pipe(gulp.dest(config.build.folder));
 });
 
 gulp.task('build', function(cb) {
     $.runSequence(
         'less',
-        'minify',
-        cb
+        ['build:css', 'build:js']
     );
 }); 
 

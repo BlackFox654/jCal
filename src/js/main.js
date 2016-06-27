@@ -11,12 +11,13 @@
         $.jCal(this, opt);
         return this;
     };
+
     $.jCal = function (target, opt) {
         opt = $.extend({
-            day: new Date(),									// date to drive first cal
-            days: 1,											// default number of days user can select
-            showMonths: 1,											// how many side-by-side months to show
-            monthSelect: false,										// show selectable month and year ranges via animated comboboxen
+            day: new Date(),     // date to drive first cal
+            days: 1,		     // default number of days user can select
+            showMonths: 1,	     // how many side-by-side months to show
+            monthSelect: false,	 // show selectable month and year ranges via animated comboboxen
             dCheck: function (day) {
                 return 'day';
             },			// handler for checking if single date is valid or not - returns class to add to day cell
@@ -40,28 +41,40 @@
             onCancel: function () {
             }
         }, opt);
-        opt.day = new Date(opt.day.getFullYear(), opt.day.getMonth(), 1);
-        if (!$(opt._target).data('days')) $(opt._target).data('days', opt.days);
+
+
+        opt.day = new Date( opt.day.getFullYear(), opt.day.getMonth(), 1);
+
+        if (!$(opt._target).data('days')) {
+            $(opt._target).data('days', opt.days);
+        }
+
         $(target).stop().empty();
-        for (var sm = 0; sm < opt.showMonths; sm++)
+
+        for (var sm = 0; sm < opt.showMonths; sm++) {
             $(target).append('<div class="jCalMo"></div>');
+        }
+
         opt.cID = 'c' + $('.jCalMo').length;
-        $('.jCalMo', target).each(
-            function (ind) {
-                drawCalControl($(this), $.extend({}, opt, {
-                        'ind': ind,
-                        'day': new Date(new Date(opt.day.getTime()).setMonth(new Date(opt.day.getTime()).getMonth() + ind))
-                    }
-                ));
-                drawCal($(this), $.extend({}, opt, {
-                        'ind': ind,
-                        'day': new Date(new Date(opt.day.getTime()).setMonth(new Date(opt.day.getTime()).getMonth() + ind))
-                    }
-                ));
-            });
-        if ($(opt._target).data('day') && $(opt._target).data('days'))
+
+        $('.jCalMo', target).each(function (ind) {
+            drawCalControl($(this), $.extend({}, opt, {
+                'ind': ind,
+                'day': new Date(new Date(opt.day.getTime()).setMonth(new Date(opt.day.getTime()).getMonth() + ind))
+            }));
+            drawCal($(this), $.extend({}, opt, {
+                'ind': ind,
+                'day': new Date(new Date(opt.day.getTime()).setMonth(new Date(opt.day.getTime()).getMonth() + ind))
+            }));
+        });
+
+        if ($(opt._target).data('day') && $(opt._target).data('days')) {
             reSelectDates(target, $(opt._target).data('day'), $(opt._target).data('days'), opt);
-        if (typeof opt.drawBack == 'function') opt.drawBack()
+        }
+
+        if (typeof opt.drawBack == 'function') {
+            opt.drawBack();
+        }
 
         $(target).append('<span class="jCal-first-day first-day"></span>');
         if (opt.showMonths > 1) {
@@ -100,9 +113,9 @@
                 $(opt._target).data('day', opt.day).data('days', di);
             }
         });
- 
+
     };
- 
+
     function drawCalControl(target, opt) {
         $(target).append(
             '<div class="jCal">' +
@@ -216,24 +229,28 @@
                 '<div class="jCalMove"></div>' +
                 '</div>');
 
-            $('.jCalMove', e.data._target).css('margin-left', ( ( mD.w / e.data.showMonths ) * -1 ) + 'px').css('opacity', 0.5).animate({marginLeft: '0px'}, e.data.scrollSpeed, function () {
-                $(this).children('.jCalMo:not(:last)').appendTo($(e.data._target));
-                $('.jCalSpace, .jCalMask', e.data._target).empty().remove();
+            $('.jCalMove', e.data._target)
+                .css('margin-left', ( ( mD.w / e.data.showMonths ) * -1 ) + 'px')
+                .css('opacity', 0.5)
+                .css('marginTop', '48px')
+                .animate({marginLeft: '0px'}, e.data.scrollSpeed, function () {
+                    $(this).children('.jCalMo:not(:last)').appendTo($(e.data._target));
+                    $('.jCalSpace, .jCalMask', e.data._target).empty().remove();
 
-                if ($(e.data._target).data('day')) {
-                    reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
-                }
+                    if ($(e.data._target).data('day')) {
+                        reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
+                    }
 
-                if (typeof opt.drawBack == 'function') {
-                    opt.drawBack();
-                }
-                if(opt.showMonths == 1) {
-                    $(e.data._target).append($('.jCal-footer'));
-                }
+                    if (typeof opt.drawBack == 'function') {
+                        opt.drawBack();
+                    }
+                    if (opt.showMonths == 1) {
+                        $(e.data._target).append($('.jCal-footer'));
+                    }
 
-            });
+                });
 
-            if(opt.showMonths == 1) {
+            if (opt.showMonths == 1) {
                 $(e.data._target).append($('.jCal-footer'));
             }
 
@@ -278,13 +295,13 @@
                 if (typeof opt.drawBack == 'function')
                     opt.drawBack();
 
-                if(opt.showMonths == 1) {
+                if (opt.showMonths == 1) {
                     $(e.data._target).append($('.jCal-footer'));
                 }
 
             });
 
-            if(opt.showMonths == 1) {
+            if (opt.showMonths == 1) {
                 $(e.data._target).append($('.jCal-footer'));
             }
 
@@ -304,7 +321,7 @@
             sDay.setDate(sDay.getDate() + 1);
         }
         if (fC && typeof opt.callback == 'function') opt.callback(day, days);
-    };
+    }
 
     function drawCal(target, opt) {
 
@@ -404,6 +421,35 @@
 
         });
 
+        var currentDate = new Date();
+        var currentDay = currentDate.getDate();
+        var currentMonth = currentDate.getMonth();
+        var currentYear = currentDate.getFullYear();
+        var iMonth = opt.day.getMonth();
+        var iYear = opt.day.getFullYear();
+
+        var $days = $('.jCalMo').first().find('.day');
+        if(currentYear > iYear) {
+            $days.each(function (i) {
+                var $this = $(this);
+                $this.addClass('day_past');
+            });
+        }  else if(currentYear == iYear) {
+            if( currentMonth > iMonth ) {
+                $days.each(function (i) {
+                    var $this = $(this);
+                    $this.addClass('day_past');
+                });
+            } else if(currentMonth == iMonth ) {
+                $days.each(function (i) {
+                    var $this = $(this);
+                    var iDay = +$this.text();
+                    if (  iDay < currentDay  ) {
+                        $this.addClass('day_past');
+                    }
+                });
+            }
+        }
 
     }
 
