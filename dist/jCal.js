@@ -43,7 +43,7 @@
         }, opt);
 
 
-        opt.day = new Date( opt.day.getFullYear(), opt.day.getMonth(), 1);
+        opt.day = new Date(opt.day.getFullYear(), opt.day.getMonth(), 1);
 
         if (!$(opt._target).data('days')) {
             $(opt._target).data('days', opt.days);
@@ -117,6 +117,7 @@
     };
 
     function drawCalControl(target, opt) {
+
         $(target).append(
             '<div class="jCal">' +
             ( (opt.ind == 0) ? '<div class="left" />' : '' ) +
@@ -126,86 +127,128 @@
             '</div>' +
             ( (opt.ind == ( opt.showMonths - 1 )) ? '<div class="right" />' : '' ) +
             '</div>');
-        if (opt.monthSelect)
+
+        if (opt.monthSelect) {
             $(target).find('.jCal .monthName, .jCal .monthYear')
-                .bind('mouseover', $.extend({}, opt),
-                    function (e) {
-                        $(this).removeClass('monthYearHover').removeClass('monthNameHover');
-                        if ($('.jCalMask', e.data._target).length == 0) $(this).addClass($(this).attr('class') + 'Hover');
-                    })
+                .bind('mouseover', $.extend({}, opt), function (e) {
+                    $(this).removeClass('monthYearHover monthNameHover');
+                    if ($('.jCalMask', e.data._target).length == 0) {
+                        $(this).addClass($(this).attr('class') + 'Hover');
+                    }
+                })
                 .bind('mouseout', function () {
                     $(this).removeClass('monthYearHover').removeClass('monthNameHover');
                 })
-                .bind('click', $.extend({}, opt),
-                    function (e) {
-                        $(e.data._target).stop();
-                        $('.jCalMo .monthSelector, .jCalMo .monthSelectorShadow').remove();
-                        var monthName = $(this).hasClass('monthName'),
-                            pad = Math.max(parseInt($(this).css('padding-left')), parseInt($(this).css('padding-left'))) || 2,
-                            calcTop = ( $(this).position().top - ( ( monthName ? e.data.day.getMonth() : 2 ) * ( $(this).height() + 0 ) ) );
-                        calcTop = calcTop > 0 ? calcTop : 0;
-                        var topDiff = $(this).position().top - calcTop;
-                        $('<div class="monthSelectorShadow" style="' +
-                            'top:' + $(e.data._target).position().top + 'px; ' +
-                            'left:' + $(e.data._target).position().left + 'px; ' +
-                            'width:' + ( $(e.data._target).width() + ( parseInt($(e.data._target).css('paddingLeft')) || 0 ) + ( parseInt($(e.data._target).css('paddingRight')) || 0 ) ) + 'px; ' +
-                            'height:' + ( $(e.data._target).height() + ( parseInt($(e.data._target).css('paddingTop')) || 0 ) + ( parseInt($(e.data._target).css('paddingBottom')) || 0 ) ) + 'px;">' +
-                            '</div>')
-                            .css('opacity', 0.01).appendTo($(this).parent());
-                        $('<div class="monthSelector" style="' +
-                            'top:' + calcTop + 'px; ' +
-                            'left:' + ( $(this).position().left ) + 'px; ' +
-                            'width:' + ( $(this).width() + ( pad * 2 ) ) + 'px;">' +
-                            '</div>')
-                            .css('opacity', 0).appendTo($(this).parent());
-                        for (var di = ( monthName ? 0 : -2 ), dd = ( monthName ? 12 : 3 ); di < dd; di++)
-                            $(this).clone().removeClass('monthYearHover').removeClass('monthNameHover').addClass('monthSelect')
-                                .attr('id', monthName ? (di + 1) + '_1_' + e.data.day.getFullYear() : (e.data.day.getMonth() + 1) + '_1_' + (e.data.day.getFullYear() + di))
-                                .html(monthName ? e.data.ml[di] : ( e.data.day.getFullYear() + di ))
-                                .css('top', ( $(this).height() * di )).appendTo($(this).parent().find('.monthSelector'));
-                        var moSel = $(this).parent().find('.monthSelector').get(0), diffOff = $(moSel).height() - ( $(moSel).height() - topDiff );
-                        $(moSel)
-                            .css('clip', 'rect(' + diffOff + 'px ' + ( $(this).width() + ( pad * 2 ) ) + 'px ' + diffOff + 'px 0px)')
-                            .animate({
-                                'opacity': .92,
-                                'clip': 'rect(0px ' + ( $(this).width() + ( pad * 2 ) ) + 'px ' + $(moSel).height() + 'px 0px)'
-                            }, e.data.scrollSpeed, function () {
-                                $(this).parent().find('.monthSelectorShadow').bind('mouseover click', function () {
-                                    $(this).parent().find('.monthSelector').remove();
-                                    $(this).remove();
-                                });
-                            })
-                            .parent().find('.monthSelectorShadow').animate({'opacity': .1}, e.data.scrollSpeed);
-                        $('.jCalMo .monthSelect', e.data._target).bind('mouseover mouseout click', $.extend({}, e.data),
-                            function (e) {
-                                if (e.type == 'click')
-                                    $(e.data._target).jCal($.extend(e.data, {day: new Date($(this).attr('id').replace(/_/g, '/'))}));
-                                else
-                                    $(this).toggleClass('monthSelectHover');
-                            });
-                        if (typeof opt.drawBack == 'function') opt.drawBack();
+                .bind('click', $.extend({}, opt), function (e) {
 
+                    $(e.data._target).stop();
+
+                    $('.jCalMo .monthSelector, .jCalMo .monthSelectorShadow').remove();
+
+                    var monthName = $(this).hasClass('monthName'),
+                        pad = Math.max(parseInt($(this).css('padding-left')), parseInt($(this).css('padding-left'))) || 2,
+                        calcTop = ( $(this).position().top - ( ( monthName ? e.data.day.getMonth() : 2 ) * ( $(this).height() + 0 ) ) );
+
+                    if (calcTop < 0) {
+                        calcTop = 0;
+                    }
+                    var topDiff = $(this).position().top - calcTop;
+
+                    $('<div class="monthSelectorShadow" style="' +
+                        'top:' + $(e.data._target).position().top + 'px; ' +
+                        'left:' + $(e.data._target).position().left + 'px; ' +
+                        'width:' + ( $(e.data._target).width() + ( parseInt($(e.data._target).css('paddingLeft')) || 0 ) + ( parseInt($(e.data._target).css('paddingRight')) || 0 ) ) + 'px; ' +
+                        'height:' + ( $(e.data._target).height() + ( parseInt($(e.data._target).css('paddingTop')) || 0 ) + ( parseInt($(e.data._target).css('paddingBottom')) || 0 ) ) + 'px;">' +
+                        '</div>')
+                        .css('opacity', 0.01).appendTo($(this).parent());
+
+                    $('<div class="monthSelector" style="' +
+                        'top:' + calcTop + 'px; ' +
+                        'left:' + ( $(this).position().left ) + 'px; ' +
+                        'width:' + ( $(this).width() + ( pad * 2 ) ) + 'px;">' +
+                        '</div>')
+                        .css('opacity', 0).appendTo($(this).parent());
+
+                    for (var di = ( monthName ? 0 : -2 ), dd = ( monthName ? 12 : 3 ); di < dd; di++) {
+
+                        var _id, _html;
+                        if(monthName) {
+                            _id = (di + 1) + '_1_' + e.data.day.getFullYear();
+                            _html = e.data.ml[di];
+                        } else {
+                            _id = (e.data.day.getMonth() + 1) + '_1_' + (e.data.day.getFullYear() + di);
+                            _html = e.data.day.getFullYear() + di;
+                        }
+
+                        $(this).clone()
+                            .removeClass('monthYearHover monthNameHover')
+                            .addClass('monthSelect')
+                            .attr('id', _id)
+                            .html(_html)
+                            .css('top', ( $(this).height() * di ))
+                            .appendTo($(this).parent().find('.monthSelector'));
+                    }
+
+
+                    var moSel = $(this).parent().find('.monthSelector').get(0),
+                        diffOff = $(moSel).height() - ( $(moSel).height() - topDiff );
+
+                    $(moSel)
+                        .css('clip', 'rect(' + diffOff + 'px ' + ( $(this).width() + ( pad * 2 ) ) + 'px ' + diffOff + 'px 0px)')
+                        .animate({
+                            'opacity': .92,
+                            'clip': 'rect(0px ' + ( $(this).width() + ( pad * 2 ) ) + 'px ' + $(moSel).height() + 'px 0px)'
+                        }, e.data.scrollSpeed, function () {
+                            $(this).parent().find('.monthSelectorShadow').bind('mouseover click', function () {
+                                $(this).parent().find('.monthSelector').remove();
+                                $(this).remove();
+                            });
+                        })
+                        .parent().find('.monthSelectorShadow')
+                        .animate({'opacity': .1}, e.data.scrollSpeed);
+
+                    $('.jCalMo .monthSelect', e.data._target).bind('mouseover mouseout click', $.extend({}, e.data), function (e) {
+                            if (e.type == 'click')
+                                $(e.data._target).jCal($.extend(e.data, {day: new Date($(this).attr('id').replace(/_/g, '/'))}));
+                            else
+                                $(this).toggleClass('monthSelectHover');
                     });
+
+                    if (typeof opt.drawBack == 'function') {
+                        opt.drawBack();
+                    }
+                });
+            ;
+        }
 
 
         $(target).find('.jCal .left').on('click', $.extend({}, opt), function (e) {
 
-            if ($('.jCalMask', e.data._target).length > 0)
+            if ($('.jCalMask', e.data._target).length > 0) {
                 return false;
+            }
 
             $(e.data._target).stop();
 
-            var mD = {w: 0, h: 0};
+            var mD = {
+                w: 0,
+                h: 0
+            };
 
             $('.jCalMo', e.data._target).each(function () {
-                mD.w += $(this).width() + parseInt($(this).css('padding-left')) + parseInt($(this).css('padding-right'));
-                var cH = $(this).height() + parseInt($(this).css('padding-top')) + parseInt($(this).css('padding-bottom'));
+                var $this = $(this);
+                mD.w += $this.width() + parseInt($this.css('padding-left')) + parseInt($this.css('padding-right'));
+                var cH = $this.height() + parseInt($this.css('padding-top')) + parseInt($this.css('padding-bottom'));
                 mD.h = ((cH > mD.h) ? cH : mD.h);
             });
 
             $(e.data._target).prepend('<div class="jCalMo"></div>');
 
-            e.data.day = new Date($('div[id*=' + e.data.cID + 'd_]:first', e.data._target).attr('id').replace(e.data.cID + 'd_', '').replace(/_/g, '/'));
+            e.data.day = new Date($('div[id*=' + e.data.cID + 'd_]:first', e.data._target)
+                .attr('id')
+                .replace(e.data.cID + 'd_', '')
+                .replace(/_/g, '/'));
+
             e.data.day.setDate(1);
             e.data.day.setMonth(e.data.day.getMonth() - 1);
 
@@ -213,7 +256,10 @@
             drawCal($('.jCalMo:first', e.data._target), e.data);
 
             if (e.data.showMonths > 1) {
-                $('.right', e.data._target).clone(true).appendTo($('.jCalMo:eq(1) .jCal', e.data._target));
+                $('.right', e.data._target)
+                    .clone(true)
+                    .appendTo($('.jCalMo:eq(1) .jCal', e.data._target));
+
                 $('.left:last, .right:last', e.data._target).remove();
             }
 
@@ -232,7 +278,7 @@
             $('.jCalMove', e.data._target)
                 .css('margin-left', ( ( mD.w / e.data.showMonths ) * -1 ) + 'px')
                 .css('opacity', 0.5)
-                .css('marginTop', '48px')
+                .css('marginTop', '52px')
                 .animate({marginLeft: '0px'}, e.data.scrollSpeed, function () {
                     $(this).children('.jCalMo:not(:last)').appendTo($(e.data._target));
                     $('.jCalSpace, .jCalMask', e.data._target).empty().remove();
@@ -258,6 +304,7 @@
 
 
         $(target).find('.jCal .right').bind('click', $.extend({}, opt), function (e) {
+
             if ($('.jCalMask', e.data._target).length > 0) return false;
             $(e.data._target).stop();
             var mD = {w: 0, h: 0};
@@ -267,6 +314,7 @@
                 mD.h = ((cH > mD.h) ? cH : mD.h);
             });
             $(e.data._target).append('<div class="jCalMo"></div>');
+
             e.data.day = new Date($('div[id^=' + e.data.cID + 'd_]:last', e.data._target).attr('id').replace(e.data.cID + 'd_', '').replace(/_/g, '/'));
             e.data.day.setDate(1);
             e.data.day.setMonth(e.data.day.getMonth() + 1);
@@ -286,27 +334,36 @@
                 '<div class="jCalMask" style="clip:rect(0px ' + mD.w + 'px ' + mD.h + 'px 0px); width:' + ( mD.w + ( mD.w / e.data.showMonths ) ) + 'px; height:' + mD.h + 'px;">' +
                 '<div class="jCalMove"></div>' +
                 '</div>');
-            $('.jCalMove', e.data._target).css('opacity', 0.5).animate({marginLeft: ( ( mD.w / e.data.showMonths ) * -1 ) + 'px'}, e.data.scrollSpeed, function () {
-                $(this).children('.jCalMo:not(:first)').appendTo($(e.data._target));
-                $('.jCalSpace, .jCalMask', e.data._target).empty().remove();
-                if ($(e.data._target).data('day'))
-                    reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
-                $(this).children('.jCalMo:not(:first)').removeClass('');
-                if (typeof opt.drawBack == 'function')
-                    opt.drawBack();
+            $('.jCalMove', e.data._target)
+                .css('opacity', 0.5)
+                .animate({marginLeft: ( ( mD.w / e.data.showMonths ) * -1 ) + 'px'}, e.data.scrollSpeed, function () {
 
-                if (opt.showMonths == 1) {
-                    $(e.data._target).append($('.jCal-footer'));
-                }
+                    $(this).children('.jCalMo:not(:first)').appendTo($(e.data._target));
 
-            });
+                    $('.jCalSpace, .jCalMask', e.data._target)
+                        .empty()
+                        .remove();
+
+                    if ($(e.data._target).data('day')) {
+                        reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
+                    }
+
+                    $(this).children('.jCalMo:not(:first)').removeClass('');
+
+                    if (typeof opt.drawBack == 'function')
+                        opt.drawBack();
+
+                    if (opt.showMonths == 1) {
+                        $(e.data._target).append($('.jCal-footer'));
+                    }
+                });
 
             if (opt.showMonths == 1) {
                 $(e.data._target).append($('.jCal-footer'));
             }
-
-
         });
+
+
     };
 
     function reSelectDates(target, day, days, opt) {
@@ -322,6 +379,7 @@
         }
         if (fC && typeof opt.callback == 'function') opt.callback(day, days);
     }
+
 
     function drawCal(target, opt) {
 
@@ -421,6 +479,7 @@
 
         });
 
+
         var currentDate = new Date();
         var currentDay = currentDate.getDate();
         var currentMonth = currentDate.getMonth();
@@ -429,22 +488,22 @@
         var iYear = opt.day.getFullYear();
 
         var $days = $('.jCalMo').first().find('.day');
-        if(currentYear > iYear) {
+        if (currentYear > iYear) {
             $days.each(function (i) {
                 var $this = $(this);
                 $this.addClass('day_past');
             });
-        }  else if(currentYear == iYear) {
-            if( currentMonth > iMonth ) {
+        } else if (currentYear == iYear) {
+            if (currentMonth > iMonth) {
                 $days.each(function (i) {
                     var $this = $(this);
                     $this.addClass('day_past');
                 });
-            } else if(currentMonth == iMonth ) {
+            } else if (currentMonth == iMonth) {
                 $days.each(function (i) {
                     var $this = $(this);
                     var iDay = +$this.text();
-                    if (  iDay < currentDay  ) {
+                    if (iDay < currentDay) {
                         $this.addClass('day_past');
                     }
                 });
