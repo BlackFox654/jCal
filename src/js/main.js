@@ -130,16 +130,16 @@
 
         if (opt.monthSelect) {
             $(target).find('.jCal .monthName, .jCal .monthYear')
-                .bind('mouseover', $.extend({}, opt), function (e) {
+               .on('mouseover', $.extend({}, opt), function (e) {
                     $(this).removeClass('monthYearHover monthNameHover');
                     if ($('.jCalMask', e.data._target).length == 0) {
                         $(this).addClass($(this).attr('class') + 'Hover');
                     }
                 })
-                .bind('mouseout', function () {
+               .on('mouseout', function () {
                     $(this).removeClass('monthYearHover').removeClass('monthNameHover');
                 })
-                .bind('click', $.extend({}, opt), function (e) {
+               .on('click', $.extend({}, opt), function (e) {
 
                     $(e.data._target).stop();
 
@@ -172,7 +172,7 @@
                     for (var di = ( monthName ? 0 : -2 ), dd = ( monthName ? 12 : 3 ); di < dd; di++) {
 
                         var _id, _html;
-                        if(monthName) {
+                        if (monthName) {
                             _id = (di + 1) + '_1_' + e.data.day.getFullYear();
                             _html = e.data.ml[di];
                         } else {
@@ -208,10 +208,10 @@
                         .animate({'opacity': .1}, e.data.scrollSpeed);
 
                     $('.jCalMo .monthSelect', e.data._target).bind('mouseover mouseout click', $.extend({}, e.data), function (e) {
-                            if (e.type == 'click')
-                                $(e.data._target).jCal($.extend(e.data, {day: new Date($(this).attr('id').replace(/_/g, '/'))}));
-                            else
-                                $(this).toggleClass('monthSelectHover');
+                        if (e.type == 'click')
+                            $(e.data._target).jCal($.extend(e.data, {day: new Date($(this).attr('id').replace(/_/g, '/'))}));
+                        else
+                            $(this).toggleClass('monthSelectHover');
                     });
 
                     if (typeof opt.drawBack == 'function') {
@@ -222,7 +222,11 @@
         }
 
 
+        /**
+         * Событие по нажатию клавиши в влево.
+         */
         $(target).find('.jCal .left').on('click', $.extend({}, opt), function (e) {
+
 
             if ($('.jCalMask', e.data._target).length > 0) {
                 return false;
@@ -302,43 +306,66 @@
 
         });
 
+        /**
+         * Событие по нажатию клавиши в право.
+         */
+        $(target).find('.jCal .right').on('click', $.extend({}, opt), function (e) {
 
-        $(target).find('.jCal .right').bind('click', $.extend({}, opt), function (e) {
 
-            if ($('.jCalMask', e.data._target).length > 0) return false;
+
+            if ($('.jCalMask', e.data._target).length > 0) {
+                return false;
+            }
+
             $(e.data._target).stop();
+
             var mD = {w: 0, h: 0};
+
             $('.jCalMo', e.data._target).each(function () {
                 mD.w += $(this).width() + parseInt($(this).css('padding-left')) + parseInt($(this).css('padding-right'));
                 var cH = $(this).height() + parseInt($(this).css('padding-top')) + parseInt($(this).css('padding-bottom'));
-                mD.h = ((cH > mD.h) ? cH : mD.h);
+                if (cH > mD.h) {
+                    mD.h = cH;
+                }
             });
+
+
             $(e.data._target).append('<div class="jCalMo"></div>');
 
             e.data.day = new Date($('div[id^=' + e.data.cID + 'd_]:last', e.data._target).attr('id').replace(e.data.cID + 'd_', '').replace(/_/g, '/'));
+
             e.data.day.setDate(1);
             e.data.day.setMonth(e.data.day.getMonth() + 1);
+
             drawCalControl($('.jCalMo:last', e.data._target), e.data);
-            drawCal($('.jCalMo:last', e.data._target), e.data);
+            drawCal($('.jCalMo:last', e.data._target), e.data, 'right');
+
+            //
             if (e.data.showMonths > 1) {
                 $('.left', e.data._target).clone(true).prependTo($('.jCalMo:eq(1) .jCal', e.data._target));
                 $('.left:first, .right:first', e.data._target).remove();
             }
+
+
             var hh = mD.h;
             if (opt.showMonths == 1) {
                 hh -= 0;
             }
 
             $(e.data._target).append('<div class="jCalSpace" style="width:' + mD.w + 'px; height:' + hh + 'px;"></div>');
+
             $('.jCalMo', e.data._target).wrapAll(
                 '<div class="jCalMask" style="clip:rect(0px ' + mD.w + 'px ' + mD.h + 'px 0px); width:' + ( mD.w + ( mD.w / e.data.showMonths ) ) + 'px; height:' + mD.h + 'px;">' +
                 '<div class="jCalMove"></div>' +
                 '</div>');
+
+
             $('.jCalMove', e.data._target)
                 .css('opacity', 0.5)
                 .animate({marginLeft: ( ( mD.w / e.data.showMonths ) * -1 ) + 'px'}, e.data.scrollSpeed, function () {
 
-                    $(this).children('.jCalMo:not(:first)').appendTo($(e.data._target));
+                    $(this).children('.jCalMo:not(:first)')
+                        .appendTo($(e.data._target));
 
                     $('.jCalSpace, .jCalMask', e.data._target)
                         .empty()
@@ -347,6 +374,8 @@
                     if ($(e.data._target).data('day')) {
                         reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
                     }
+ 
+                    setPostDay(opt);
 
                     $(this).children('.jCalMo:not(:first)').removeClass('');
 
@@ -356,15 +385,16 @@
                     if (opt.showMonths == 1) {
                         $(e.data._target).append($('.jCal-footer'));
                     }
+
                 });
+
 
             if (opt.showMonths == 1) {
                 $(e.data._target).append($('.jCal-footer'));
             }
         });
 
-
-    };
+    }
 
     function reSelectDates(target, day, days, opt) {
         var fDay = new Date(day.getTime());
@@ -380,8 +410,47 @@
         if (fC && typeof opt.callback == 'function') opt.callback(day, days);
     }
 
+    function setPostDay(opt, turn) {
+        var currentDate = new Date();
+        var currentDay = currentDate.getDate();
+        var currentMonth = currentDate.getMonth();
+        var currentYear = currentDate.getFullYear();
+        var iMonth = opt.day.getMonth();
+        var iYear = opt.day.getFullYear();
+        var $days;
 
-    function drawCal(target, opt) {
+        if(!turn) {
+            $days =  $('.jCalMo').first().find('.day');
+        } else if(turn == 'left') {
+            $days =  $('.jCalMo').first().find('.day');
+        } else if(turn == 'right') {
+            $days =  $('.jCalMo').last().find('.day');
+        }
+
+        if (currentYear > iYear) {
+            $days.each(function (i) {
+                var $this = $(this);
+                $this.addClass('day_past');
+            });
+        } else if (currentYear == iYear) {
+            if (currentMonth > iMonth) {
+                $days.each(function (i) {
+                    var $this = $(this);
+                    $this.addClass('day_past');
+                });
+            } else if (currentMonth == iMonth) {
+                $days.each(function (i) {
+                    var $this = $(this);
+                    var iDay = +$this.text();
+                    if (iDay < currentDay) {
+                        $this.addClass('day_past');
+                    }
+                });
+            }
+        }
+    }
+
+    function drawCal(target, opt, turn) {
 
         for (var ds = 0, length = opt.dow.length; ds < length; ds++)
             $(target).append('<div class="dow">' + opt.dow[ds] + '</div>');
@@ -412,7 +481,7 @@
         $(target).find('div[id^=' + opt.cID + 'd]:first, div[id^=' + opt.cID + 'd]:nth-child(7n+2)').before('<br style="clear:both;" />');
 
 
-        $(target).find('div[id^=' + opt.cID + 'd_]:not(.invday)').bind("mouseover mouseout click", $.extend({}, opt), function (e) {
+        $(target).find('div[id^=' + opt.cID + 'd_]:not(.invday)').on("mouseover mouseout click", $.extend({}, opt), function (e) {
 
             if ($('.jCalMask', e.data._target).length > 0) {
                 return false;
@@ -479,37 +548,7 @@
 
         });
 
-
-        var currentDate = new Date();
-        var currentDay = currentDate.getDate();
-        var currentMonth = currentDate.getMonth();
-        var currentYear = currentDate.getFullYear();
-        var iMonth = opt.day.getMonth();
-        var iYear = opt.day.getFullYear();
-
-        var $days = $('.jCalMo').first().find('.day');
-        if (currentYear > iYear) {
-            $days.each(function (i) {
-                var $this = $(this);
-                $this.addClass('day_past');
-            });
-        } else if (currentYear == iYear) {
-            if (currentMonth > iMonth) {
-                $days.each(function (i) {
-                    var $this = $(this);
-                    $this.addClass('day_past');
-                });
-            } else if (currentMonth == iMonth) {
-                $days.each(function (i) {
-                    var $this = $(this);
-                    var iDay = +$this.text();
-                    if (iDay < currentDay) {
-                        $this.addClass('day_past');
-                    }
-                });
-            }
-        }
-
+        setPostDay(opt, turn);
     }
 
 })(jQuery);
