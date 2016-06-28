@@ -351,7 +351,7 @@
             if(opt._target.data('selected-day') && opt._target.data('selected-days')) {
 
                 $(opt._target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
-                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days') , opt);
+                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days') , opt, true);
             }
 
         });
@@ -444,14 +444,14 @@
             if(opt._target.data('selected-day') && opt._target.data('selected-days')) {
 
                 $(opt._target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
-                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days') , opt);
+                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days') , opt, true);
             }
 
         });
 
     }
 
-    function reSelectDates(target, day, days, opt) {
+    function reSelectDates(target, day, days, opt, isnCallback) {
         var fDay = new Date(day.getTime());
         var sDay = new Date(day.getTime());
         for (var fC = false, di = 0, dC = days; di < dC; di++) {
@@ -468,7 +468,8 @@
             }
 
         }
-        if (fC && typeof opt.callback == 'function') {
+        
+        if (fC && typeof opt.callback == 'function' && !isnCallback) {
             opt.callback(day, days);
         }
             
