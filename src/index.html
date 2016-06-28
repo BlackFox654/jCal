@@ -10,8 +10,13 @@
 </head>
 <body>
 
-<div class="calendar-wr">
+<div class="calendar-wr" style="min-height: 400px">
     <div id="cal" class="calendar"></div>
+</div>
+
+<div>
+    <button type="button" class="js-reset">Сбросить</button>
+    <button type="button" class="js-set-data">Задать дату</button>
 </div>
 
 <script type="text/javascript" src="components/jquery/dist/jquery.min.js"></script>
@@ -23,21 +28,30 @@
     (function ($) {
         $(document).ready(function (e) {
 
-            $('#cal').jCal({
+            var $cal = $('#cal').jCal({
                 day: new Date(),
                 days: 4,
                 showMonths: 2,
                 monthSelect: true,
                 dayOffset: 1,
+                maxDate: new Date('10/20/2016'),
                 dow: ['П', 'В', 'С', 'Ч', 'П', 'С', 'В'],
                 ml: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
                 ms: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июль', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
                 callback: function (day, days) {
-                    console.log('selected ' + days + ' days starting ' + day);
+                    //console.log('selected ' + days + ' days starting ' + day);
                 },
                 onReset: function () {
-                    console.log('sssss');
+                    //console.log('reset');
                 }
+            });
+
+            $('.js-reset').click(function () {
+                $cal.jCal('reset');
+            });
+
+            $('.js-set-data').click(function () {
+                $cal.jCal('select', '12/10/2017');
             });
 
         });

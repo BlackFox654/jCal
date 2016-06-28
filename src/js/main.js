@@ -7,41 +7,89 @@
  * Released under MIT license.
  */
 (function ($) {
-    $.fn.jCal = function (inmethod, opt) {
-        $.jCal(this, opt);
+
+    var defaults = {
+        day: new Date(),     // date to drive first cal
+        days: 1,		     // default number of days user can select
+        showMonths: 1,	     // how many side-by-side months to show
+        monthSelect: false,	 // show selectable month and year ranges via animated comboboxen
+        dCheck: function (day) {
+            return 'day';
+        },			// handler for checking if single date is valid or not - returns class to add to day cell
+        callback: function (day, days) {
+            return true;
+        },		// callback function for click on date
+        drawBack: function () {
+            return true;
+        },				// callback function for month being drawn
+        selectedBG: 'rgb(0, 143, 214)',							// default bgcolor for selected date cell
+        defaultBG: 'rgb(255, 255, 255)',						// default bgcolor for unselected date cell
+        dayOffset: 0,											// 0=week start with sunday, 1=week starts with monday
+        scrollSpeed: 150,										// default .animate() speed used
+        forceWeek: false,										// true=force selection at start of week, false=select days out from selected day
+        dow: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],		// days of week - change this to reflect your dayOffset
+        ml: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        ms: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        minDate: null,
+        maxDate: null,
+        selectedDay: null,
+        selectedDays: null,
+        onReset: function () {},
+        onCancel: function () {}
+    };
+
+    var methods = {
+        init : function( inOptions ) {
+            var $this = $(this),
+                data = $this.data('jCal');
+
+            var options = $.extend({_target: this}, inOptions);
+            $.jCal(this, options);
+
+            return $this;
+        },
+        select : function( date ) {
+            var $this = $(this),
+                data = $this.data('jCal');
+
+            var selectDate = new Date(date);
+
+            var xDate =  new Date(selectDate);
+            xDate.setDate(selectDate.getDate() - 3);
+
+            if ( data.maxDate && xDate > data.maxDate ) {
+                xDate = new Date(data.maxDate);
+
+                xDate.setDate(xDate.getDate() - 3);
+                selectDate = xDate;
+            }
+
+            $this.jCal($.extend(data, {day: selectDate}));
+            reSelectDates(data._target, selectDate, $(data._target).data('days'), data);
+        },
+        reset : function( ) {
+            var $this = $(this),
+                data = $this.data('jCal');
+
+            $this.find('.jCal-reset').trigger('click');
+        }
+    };
+
+    $.fn.jCal = function (method) {
+
+        if ( methods[method] ) {
+            return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof method === 'object' || ! method ) {
+            return methods.init.apply( this, arguments );
+        } else {
+            $.error( 'Метод с именем ' +  method + ' не существует для jQuery.jCal' );
+        }
+
         return this;
     };
 
     $.jCal = function (target, opt) {
-        opt = $.extend({
-            day: new Date(),     // date to drive first cal
-            days: 1,		     // default number of days user can select
-            showMonths: 1,	     // how many side-by-side months to show
-            monthSelect: false,	 // show selectable month and year ranges via animated comboboxen
-            dCheck: function (day) {
-                return 'day';
-            },			// handler for checking if single date is valid or not - returns class to add to day cell
-            callback: function (day, days) {
-                return true;
-            },		// callback function for click on date
-            drawBack: function () {
-                return true;
-            },				// callback function for month being drawn
-            selectedBG: 'rgb(0, 143, 214)',							// default bgcolor for selected date cell
-            defaultBG: 'rgb(255, 255, 255)',						// default bgcolor for unselected date cell
-            dayOffset: 0,											// 0=week start with sunday, 1=week starts with monday
-            scrollSpeed: 150,										// default .animate() speed used
-            forceWeek: false,										// true=force selection at start of week, false=select days out from selected day
-            dow: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],		// days of week - change this to reflect your dayOffset
-            ml: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            ms: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            _target: target,
-            onReset: function () {
-            },
-            onCancel: function () {
-            }
-        }, opt);
-
+        opt = $.extend(defaults, opt);
 
         opt.day = new Date(opt.day.getFullYear(), opt.day.getMonth(), 1);
 
@@ -79,28 +127,17 @@
         $(target).append('<span class="jCal-first-day first-day"></span>');
         if (opt.showMonths > 1) {
             $(target).prepend('<div class="jCal-header"><button class="jCal-btn jCal-reset"><span class="jcal-btn__text">Выбрать все даты</span></button></div>');
-            $(target).find('.jCal-reset').bind('click', $.extend({}, opt), function (e) {
+            $(target).find('.jCal-reset').on('click', $.extend({}, opt), function (e) {
                 $(target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
                 opt.onReset();
             });
 
         } else {
             $(target).append('<div class="jCal-footer"><button class="jCal-btn jCal-btn_confirm jCal-confirm"><span class="jcal-btn__text">Ок</span></button><button class="jCal-btn jCal-btn_cancel jCal-cancel"><span class="jcal-btn__text">Отмена</span></button></div>');
-            $(target).find('.jCal-cancel').bind('click', $.extend({}, opt), function (e) {
+            $(target).find('.jCal-cancel').on('click', $.extend({}, opt), function (e) {
                 opt.onCancel();
             });
         }
-
-
-        var currentDate = new Date().getDate();
-        var $days = $('.jCalMo').first().find('.day');
-        $days.each(function (i) {
-            var $this = $(this);
-            var iDay = +$this.text();
-            if (iDay < currentDate) {
-                $this.addClass('day_past');
-            }
-        });
 
         var $jCalConfirm = $('.jCal-confirm');
 
@@ -110,10 +147,13 @@
             var di = $this.data('di');
             opt.day = osDate;
             if (opt.callback(osDate, di)) {
+                console.log('ssaas');
                 $(opt._target).data('day', opt.day).data('days', di);
             }
         });
 
+        // Save options
+        $(opt._target).data('jCal', opt);
     };
 
     function drawCalControl(target, opt) {
@@ -122,8 +162,8 @@
             '<div class="jCal">' +
             ( (opt.ind == 0) ? '<div class="left" />' : '' ) +
             '<div class="month">' +
-            '<span class="monthYear">' + opt.day.getFullYear() + '</span>' +
-            '<span class="monthName">' + opt.ml[opt.day.getMonth()] + '</span>' +
+            '<span class="monthYear" data-cal-year="'+opt.day.getFullYear()+'">' + opt.day.getFullYear() + '</span>' +
+            '<span class="monthName" data-cal-manth="' + opt.day.getMonth() + '">' + opt.ml[opt.day.getMonth()] + '</span>' +
             '</div>' +
             ( (opt.ind == ( opt.showMonths - 1 )) ? '<div class="right" />' : '' ) +
             '</div>');
@@ -199,7 +239,7 @@
                             'opacity': .92,
                             'clip': 'rect(0px ' + ( $(this).width() + ( pad * 2 ) ) + 'px ' + $(moSel).height() + 'px 0px)'
                         }, e.data.scrollSpeed, function () {
-                            $(this).parent().find('.monthSelectorShadow').bind('mouseover click', function () {
+                            $(this).parent().find('.monthSelectorShadow').on('mouseover click', function () {
                                 $(this).parent().find('.monthSelector').remove();
                                 $(this).remove();
                             });
@@ -207,11 +247,15 @@
                         .parent().find('.monthSelectorShadow')
                         .animate({'opacity': .1}, e.data.scrollSpeed);
 
-                    $('.jCalMo .monthSelect', e.data._target).bind('mouseover mouseout click', $.extend({}, e.data), function (e) {
-                        if (e.type == 'click')
+                    $('.jCalMo .monthSelect', e.data._target).on('mouseover mouseout click', $.extend({}, e.data), function (e) {
+
+                        if (e.type == 'click') {
                             $(e.data._target).jCal($.extend(e.data, {day: new Date($(this).attr('id').replace(/_/g, '/'))}));
-                        else
+
+                        } else {
                             $(this).toggleClass('monthSelectHover');
+                        }
+                           
                     });
 
                     if (typeof opt.drawBack == 'function') {
@@ -304,14 +348,18 @@
                 $(e.data._target).append($('.jCal-footer'));
             }
 
+            if(opt._target.data('selected-day') && opt._target.data('selected-days')) {
+
+                $(opt._target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
+                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days') , opt);
+            }
+
         });
 
         /**
          * Событие по нажатию клавиши в право.
          */
         $(target).find('.jCal .right').on('click', $.extend({}, opt), function (e) {
-
-
 
             if ($('.jCalMask', e.data._target).length > 0) {
                 return false;
@@ -375,7 +423,7 @@
                         reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
                     }
  
-                    setPostDay(opt);
+                    //setPostDay(opt);
 
                     $(this).children('.jCalMo:not(:first)').removeClass('');
 
@@ -392,6 +440,13 @@
             if (opt.showMonths == 1) {
                 $(e.data._target).append($('.jCal-footer'));
             }
+
+            if(opt._target.data('selected-day') && opt._target.data('selected-days')) {
+
+                $(opt._target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
+                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days') , opt);
+            }
+
         });
 
     }
@@ -406,48 +461,102 @@
                 fC = true;
             }
             sDay.setDate(sDay.getDate() + 1);
+            if (di == 0) {
+                dF.addClass('selectedDay_first');
+            } else if (di == dC - 1) {
+                dF.addClass('selectedDay_last');
+            }
+
         }
-        if (fC && typeof opt.callback == 'function') opt.callback(day, days);
+        if (fC && typeof opt.callback == 'function') {
+            opt.callback(day, days);
+        }
+            
     }
 
-    function setPostDay(opt, turn) {
+    function setPostDay(opt) {
+
+
         var currentDate = new Date();
+        var maxDate = null;
+
+        if(opt.minDate && opt.minDate > currentDate) {
+            currentDate = new Date(opt.minDate);
+        }
+        if(opt.maxDate) {
+            maxDate = new Date(opt.maxDate);
+        }
+
         var currentDay = currentDate.getDate();
         var currentMonth = currentDate.getMonth();
         var currentYear = currentDate.getFullYear();
-        var iMonth = opt.day.getMonth();
-        var iYear = opt.day.getFullYear();
+
         var $days;
 
-        if(!turn) {
-            $days =  $('.jCalMo').first().find('.day');
-        } else if(turn == 'left') {
-            $days =  $('.jCalMo').first().find('.day');
-        } else if(turn == 'right') {
-            $days =  $('.jCalMo').last().find('.day');
-        }
+        $('.jCalMo').each(function () {
+            var $this = $(this);
+            $days =  $this.find('.day');
 
-        if (currentYear > iYear) {
-            $days.each(function (i) {
-                var $this = $(this);
-                $this.addClass('day_past');
-            });
-        } else if (currentYear == iYear) {
-            if (currentMonth > iMonth) {
-                $days.each(function (i) {
-                    var $this = $(this);
-                    $this.addClass('day_past');
-                });
-            } else if (currentMonth == iMonth) {
-                $days.each(function (i) {
-                    var $this = $(this);
-                    var iDay = +$this.text();
-                    if (iDay < currentDay) {
+            if($this.find('.monthName') && $this.find('.monthYear')) {
+                var iMonth = $this.find('.monthName').data('cal-manth');
+                var iYear = $this.find('.monthYear').data('cal-year');
+
+                if (currentYear > iYear) {
+                    $days.each(function (i) {
+                        var $this = $(this);
                         $this.addClass('day_past');
+                    });
+                } else if (currentYear == iYear) {
+                    if (currentMonth > iMonth) {
+                        $days.each(function (i) {
+                            var $this = $(this);
+                            $this.addClass('day_past');
+                        });
+                    } else if (currentMonth == iMonth) {
+                        $days.each(function (i) {
+                            var $this = $(this);
+                            var iDay = +$this.text();
+                            if (iDay < currentDay) {
+                                $this.addClass('day_past');
+                            }
+                        });
                     }
-                });
+                }
+
+                if (maxDate) {
+                    var maxYear =  maxDate.getFullYear();
+                    var maxMonth =  maxDate.getMonth();
+                    var maxDay =  maxDate.getDate();
+
+                    if (iYear > maxYear) {
+                        $days.each(function (i) {
+                            var $this = $(this);
+                            $this.addClass('day_past');
+                        });
+                    } else if (iYear == maxYear) {
+                        if(iMonth > maxMonth) {
+                            $days.each(function (i) {
+                                var $this = $(this);
+                                $this.addClass('day_past');
+                            });
+                        } else if(iMonth == maxMonth) {
+                            $days.each(function (i) {
+                                var $this = $(this);
+                                var iDay = +$this.text();
+                                if (iDay > maxDay) {
+                                    $this.addClass('day_past');
+                                }
+                            });
+                        }
+                    }
+                }
             }
-        }
+
+        });
+
+
+
+
     }
 
     function drawCal(target, opt, turn) {
@@ -495,16 +604,16 @@
 
             var sDate = new Date(osDate.getTime());
             if (e.type == 'click') {
+
                 $('div[id*=d_]', e.data._target).stop().removeClass('selectedDay').removeClass('selectedDay_first').removeClass('selectedDay_last').removeClass('overDay');
 
                 var _dayClicked = $(e.target).closest('.day');
                 var _jCalMo = _dayClicked.closest('.jCalMo');
 
-                if(!_jCalMo.next().hasClass('jCalMo') && _dayClicked.nextAll().length < 3) {
+                if(!_jCalMo.next().hasClass('jCalMo') && _dayClicked.nextAll('.day').length < 3) {
                     _jCalMo.find('.right').trigger('click');
                 }
             }
-
 
             for (var di = 0, ds = $(e.data._target).data('days'); di < ds; di++) {
                 var currDay = $(e.data._target).find('#' + e.data.cID + 'd_' + ( sDate.getMonth() + 1 ) + '_' + sDate.getDate() + '_' + sDate.getFullYear());
@@ -546,6 +655,9 @@
                 $jCalConfirm.data('osDate', osDate);
                 $jCalConfirm.data('di', di);
 
+                opt._target.data('selected-day', osDate);
+                opt._target.data('selected-days', di);
+
                 if (opt.showMonths > 1) {
                     e.data.day = osDate;
                     if (e.data.callback(osDate, di, this)) {
@@ -556,7 +668,6 @@
 
         });
 
-        setPostDay(opt, turn);
+        setPostDay(opt);
     }
-
 })(jQuery);
