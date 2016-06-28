@@ -7,7 +7,7 @@
  * Released under MIT license.
  */
 (function ($) {
-    $.fn.jCal = function (opt) {
+    $.fn.jCal = function (inmethod, opt) {
         $.jCal(this, opt);
         return this;
     };
@@ -310,7 +310,9 @@
          * Событие по нажатию клавиши в право.
          */
         $(target).find('.jCal .right').on('click', $.extend({}, opt), function (e) {
-            
+
+
+
             if ($('.jCalMask', e.data._target).length > 0) {
                 return false;
             }
@@ -494,7 +496,15 @@
             var sDate = new Date(osDate.getTime());
             if (e.type == 'click') {
                 $('div[id*=d_]', e.data._target).stop().removeClass('selectedDay').removeClass('selectedDay_first').removeClass('selectedDay_last').removeClass('overDay');
+
+                var _dayClicked = $(e.target).closest('.day');
+                var _jCalMo = _dayClicked.closest('.jCalMo');
+
+                if(!_jCalMo.next().hasClass('jCalMo') && _dayClicked.nextAll().length < 3) {
+                    _jCalMo.find('.right').trigger('click');
+                }
             }
+
 
             for (var di = 0, ds = $(e.data._target).data('days'); di < ds; di++) {
                 var currDay = $(e.data._target).find('#' + e.data.cID + 'd_' + ( sDate.getMonth() + 1 ) + '_' + sDate.getDate() + '_' + sDate.getFullYear());
