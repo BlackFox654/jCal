@@ -326,4 +326,22 @@
 
 .day.day_past {
   opacity: .2;
+  cursor: default;
+
+  &.overDay {
+    &:before {
+      background-color: transparent;
+      border-radius: 0;
+    }
+  }
+  .first-day {
+    display: none;
+  }
+  &.selectedDay {
+    &:after,
+    &_first:after,
+    &_last:after {
+      background: transparent;
+    }
+  }
 }

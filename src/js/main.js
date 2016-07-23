@@ -247,6 +247,7 @@
                         .parent().find('.monthSelectorShadow')
                         .animate({'opacity': .1}, e.data.scrollSpeed);
 
+                    // Выбор месяца
                     $('.jCalMo .monthSelect', e.data._target).on('mouseover mouseout click', $.extend({}, e.data), function (e) {
 
                         if (e.type == 'click') {
@@ -395,6 +396,7 @@
             }
 
 
+
             var hh = mD.h;
             if (opt.showMonths == 1) {
                 hh -= 0;
@@ -408,9 +410,11 @@
                 '</div>');
 
 
+
             $('.jCalMove', e.data._target)
                 .css('opacity', 0.5)
                 .animate({marginLeft: ( ( mD.w / e.data.showMonths ) * -1 ) + 'px'}, e.data.scrollSpeed, function () {
+
 
                     $(this).children('.jCalMo:not(:first)')
                         .appendTo($(e.data._target));
@@ -420,9 +424,10 @@
                         .remove();
 
                     if ($(e.data._target).data('day')) {
+
                         reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
                     }
- 
+
                     //setPostDay(opt);
 
                     $(this).children('.jCalMo:not(:first)').removeClass('');
@@ -452,6 +457,8 @@
     }
 
     function reSelectDates(target, day, days, opt, isnCallback) {
+
+
         var fDay = new Date(day.getTime());
         var sDay = new Date(day.getTime());
         for (var fC = false, di = 0, dC = days; di < dC; di++) {
@@ -606,15 +613,25 @@
             var sDate = new Date(osDate.getTime());
             if (e.type == 'click') {
 
-                $('div[id*=d_]', e.data._target).stop().removeClass('selectedDay').removeClass('selectedDay_first').removeClass('selectedDay_last').removeClass('overDay');
+                $('div[id*=d_]', e.data._target)
+                    .stop()
+                    .removeClass('selectedDay selectedDay_first selectedDay_last overDay');
 
                 var _dayClicked = $(e.target).closest('.day');
                 var _jCalMo = _dayClicked.closest('.jCalMo');
 
                 if(!_jCalMo.next().hasClass('jCalMo') && _dayClicked.nextAll('.day').length < 3) {
+
                     _jCalMo.find('.right').trigger('click');
                 }
+
+                $('div[id*=d_]', e.data._target)
+                    .stop()
+                    .removeClass('selectedDay selectedDay_first selectedDay_last overDay');
+                $('body').append($('.jCal-first-day'));
             }
+
+
 
             for (var di = 0, ds = $(e.data._target).data('days'); di < ds; di++) {
                 var currDay = $(e.data._target).find('#' + e.data.cID + 'd_' + ( sDate.getMonth() + 1 ) + '_' + sDate.getDate() + '_' + sDate.getFullYear());
@@ -624,47 +641,60 @@
                 }
                 var ss = $('.jCal-first-day');
 
-                if (e.type == 'mouseover') {
-                    if (di == 0) {
-                        ss.removeClass('hidden');
-                        $(currDay).addClass('overDay_first').append(ss);
-                    } else if (di == ds - 1) {
-                        $(currDay).addClass('overDay_last');
+                var next1 = currDay.hasClass('day_past');
+                var next2 = currDay.next().hasClass('day_past');
+                var next3 = currDay.next().next().hasClass('day_past');
+                var next4 = currDay.next().next().next().hasClass('day_past') ;
+                var prev1 = currDay.hasClass('day_past');
+                var prev2 = currDay.prev().hasClass('day_past');
+                var prev3 = currDay.prev().prev().hasClass('day_past');
+                var prev4 = currDay.prev().prev().prev().hasClass('day_past') ;
+
+                if( (!next1 &&  !next2 &&  !next3 &&  !next4) || (!prev1 &&  !prev2 &&  !prev3 &&  !prev4) ) {
+                    if (e.type == 'mouseover') {
+
+                        if (di == 0) {
+                            ss.removeClass('hidden');
+                            $(currDay).addClass('overDay_first').append(ss);
+                        } else if (di == ds - 1) {
+                            $(currDay).addClass('overDay_last');
+                        }
+                        $(currDay).addClass('overDay');
+                    } else if (e.type == 'mouseout') {
+                        if (di == 0) {
+                            $(currDay).removeClass('overDay_first');
+                        } else if (di == ds - 1) {
+                            $(currDay).removeClass('overDay_last');
+                        }
+                        $(currDay).stop().removeClass('overDay');
+                        ss.addClass('hidden');
+                    } else if (e.type == 'click') {
+                        if (di == 0) {
+                            $(currDay).addClass('selectedDay_first');
+                        } else if (di == ds - 1) {
+                            $(currDay).addClass('selectedDay_last');
+                        }
+                        $(currDay).addClass('selectedDay');
                     }
-                    $(currDay).addClass('overDay');
-                } else if (e.type == 'mouseout') {
-                    if (di == 0) {
-                        $(currDay).removeClass('overDay_first');
-                    } else if (di == ds - 1) {
-                        $(currDay).removeClass('overDay_last');
+                    sDate.setDate(sDate.getDate() + 1);
+
+                    if (e.type == 'click') {
+                        var $jCalConfirm = $('.jCal-confirm');
+                        $jCalConfirm.data('osDate', osDate);
+                        $jCalConfirm.data('di', di);
+
+                        opt._target.data('selected-day', osDate);
+                        opt._target.data('selected-days', di);
+
+                        if (opt.showMonths > 1) {
+                            e.data.day = osDate;
+                            if (e.data.callback(osDate, di, this)) {
+                                $(e.data._target).data('day', e.data.day).data('days', di);
+                            }
+                        }
                     }
-                    $(currDay).stop().removeClass('overDay');
-                    ss.addClass('hidden');
-                } else if (e.type == 'click') {
-                    if (di == 0) {
-                        $(currDay).addClass('selectedDay_first');
-                    } else if (di == ds - 1) {
-                        $(currDay).addClass('selectedDay_last');
-                    }
-                    $(currDay).addClass('selectedDay');
                 }
-                sDate.setDate(sDate.getDate() + 1);
-            }
 
-            if (e.type == 'click') {
-                var $jCalConfirm = $('.jCal-confirm');
-                $jCalConfirm.data('osDate', osDate);
-                $jCalConfirm.data('di', di);
-
-                opt._target.data('selected-day', osDate);
-                opt._target.data('selected-days', di);
-
-                if (opt.showMonths > 1) {
-                    e.data.day = osDate;
-                    if (e.data.callback(osDate, di, this)) {
-                        $(e.data._target).data('day', e.data.day).data('days', di);
-                    }
-                }
             }
 
         });

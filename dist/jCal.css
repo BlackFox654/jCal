@@ -281,4 +281,17 @@
 }
 .day.day_past {
   opacity: .2;
+  cursor: default;
+}
+.day.day_past.overDay:before {
+  background-color: transparent;
+  border-radius: 0;
+}
+.day.day_past .first-day {
+  display: none;
+}
+.day.day_past.selectedDay:after,
+.day.day_past.selectedDay_first:after,
+.day.day_past.selectedDay_last:after {
+  background: transparent;
 }
