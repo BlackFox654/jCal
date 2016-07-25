@@ -35,7 +35,8 @@
         selectedDay: null,
         selectedDays: null,
         onReset: function () {},
-        onCancel: function () {}
+        onCancel: function () {},
+        timezoneOffset: Math.abs(new Date().getTimezoneOffset()/60)
     };
 
     var methods = {
@@ -92,6 +93,7 @@
         opt = $.extend(defaults, opt);
 
         opt.day = new Date(opt.day.getFullYear(), opt.day.getMonth(), 1);
+        opt.day.setUTCHours(0);
 
         if (!$(opt._target).data('days')) {
             $(opt._target).data('days', opt.days);
