@@ -38,7 +38,7 @@
         },
         onCancel: function () {
         },
-        timezoneOffset: Math.abs(new Date().getTimezoneOffset() / 60)
+        timezoneOffset: -1*(new Date().getTimezoneOffset() / 60)
     };
 
     var methods = {
@@ -49,7 +49,7 @@
             var options = $.extend({_target: this}, inOptions);
 
 
-            if (options.minDate) {
+            if (options.minDate && options.timezoneOffset) {
                 var sourceDate = moment(options.minDate)
                     .utcOffset(options.timezoneOffset);
 
@@ -59,10 +59,10 @@
                     .month(sourceDate.month())
                     .date(sourceDate.date())
                     .toDate();
-
             }
-            if (options.maxDate) {
-                 sourceDate = moment(options.maxDate)
+
+            if (options.maxDate && options.timezoneOffset) {
+                sourceDate = moment(options.maxDate)
                     .utcOffset(options.timezoneOffset);
 
                 options.maxDate = moment()
