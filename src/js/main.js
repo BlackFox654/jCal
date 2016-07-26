@@ -49,7 +49,7 @@
             var options = $.extend({_target: this}, inOptions);
 
 
-            if(options.minDate) {
+            if (options.minDate) {
                 var sourceDate = moment(options.minDate)
                     .utcOffset(options.timezoneOffset);
 
@@ -61,16 +61,15 @@
                     .toDate();
 
             }
-            if(options.maxDate) {
-
-                var sourceDatem = moment(options.maxDate)
+            if (options.maxDate) {
+                 sourceDate = moment(options.maxDate)
                     .utcOffset(options.timezoneOffset);
 
                 options.maxDate = moment()
                     .startOf('day')
-                    .year(sourceDatem.year())
-                    .month(sourceDatem.month())
-                    .date(sourceDatem.date())
+                    .year(sourceDate.year())
+                    .month(sourceDate.month())
+                    .date(sourceDate.date())
                     .toDate();
             }
 
@@ -133,7 +132,6 @@
         opt = $.extend(defaults, opt);
 
         opt.day = new Date(opt.day.getFullYear(), opt.day.getMonth(), 1);
-
 
 
         if (!$(opt._target).data('days')) {
@@ -722,7 +720,7 @@
                         $jCalConfirm.data('di', di);
 
                         opt._target.data('selected-day', osDate);
-                        opt._target.data('selected-days', di);
+                        opt._target.data('selected-days', di + 1);
 
                         if (opt.showMonths > 1) {
 
@@ -736,7 +734,7 @@
                                 .toDate();
 
                             if (e.data.callback(x, di, this)) {
-                                $(e.data._target).data('day', e.data.day).data('days', di);
+                                $(e.data._target).data('day', e.data.day).data('days', di + 1);
                             }
                         }
                     }
