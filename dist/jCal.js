@@ -31,7 +31,9 @@
         ml: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         ms: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         minDate: null,
+        minDateOrg: null,
         maxDate: null,
+        maxDateOrg: null,
         selectedDay: null,
         selectedDays: null,
         onReset: function () {
@@ -46,11 +48,17 @@
             var $this = $(this),
                 data = $this.data('jCal');
 
+            console.log('sssss');
+
             var options = $.extend({_target: this}, inOptions);
 
 
             if (options.minDate && options.timezoneOffset) {
-                var sourceDate = moment(options.minDate)
+
+                if(!options.minDateOrg) {
+                    options.minDateOrg = options.minDate;
+                }
+                var sourceDate = moment(options.minDateOrg)
                     .utcOffset(options.timezoneOffset);
 
                 options.minDate = moment()
@@ -62,7 +70,12 @@
             }
 
             if (options.maxDate && options.timezoneOffset) {
-                sourceDate = moment(options.maxDate)
+
+                if(!options.maxDateOrg) {
+                    options.maxDateOrg = options.maxDate;
+                }
+
+                sourceDate = moment(options.maxDateOrg)
                     .utcOffset(options.timezoneOffset);
 
                 options.maxDate = moment()
