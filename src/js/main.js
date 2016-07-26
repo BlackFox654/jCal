@@ -34,41 +34,81 @@
         maxDate: null,
         selectedDay: null,
         selectedDays: null,
-        onReset: function () {},
-        onCancel: function () {},
-        timezoneOffset: Math.abs(new Date().getTimezoneOffset()/60)
+        onReset: function () {
+        },
+        onCancel: function () {
+        },
+        timezoneOffset: Math.abs(new Date().getTimezoneOffset() / 60)
     };
 
     var methods = {
-        init : function( inOptions ) {
+        init: function (inOptions) {
             var $this = $(this),
                 data = $this.data('jCal');
 
             var options = $.extend({_target: this}, inOptions);
+
+
+            if(options.minDate) {
+                var sourceDate = moment(options.minDate)
+                    .utcOffset(options.timezoneOffset);
+
+                options.minDate = moment()
+                    .startOf('day')
+                    .year(sourceDate.year())
+                    .month(sourceDate.month())
+                    .date(sourceDate.date())
+                    .toDate();
+
+            }
+            if(options.maxDate) {
+
+                var sourceDatem = moment(options.maxDate)
+                    .utcOffset(options.timezoneOffset);
+
+                options.maxDate = moment()
+                    .startOf('day')
+                    .year(sourceDatem.year())
+                    .month(sourceDatem.month())
+                    .date(sourceDatem.date())
+                    .toDate();
+            }
+
+
             $.jCal(this, options);
 
             return $this;
         },
-        select : function( date ) {
+        select: function (date) {
             var $this = $(this),
                 data = $this.data('jCal');
 
-            var selectDate = new Date(date);
+            var sourceDate = moment(date)
+                .utcOffset(data.timezoneOffset);
 
-            var xDate =  new Date(selectDate);
-            xDate.setDate(selectDate.getDate() - 3);
+            var selectDate = moment()
+                .startOf('day')
+                .year(sourceDate.year())
+                .month(sourceDate.month())
+                .date(sourceDate.date())
+                .toDate();
 
-            if ( data.maxDate && xDate > data.maxDate ) {
-                xDate = new Date(data.maxDate);
+            // var xDate = new Date(selectDate);
+            // xDate.setDate(selectDate.getDate() - 3);
+            //
+            // if ( data.maxDate && xDate > data.maxDate ) {
+            //     xDate = new Date(data.maxDate);
+            //
+            //     xDate.setDate(xDate.getDate() - 3);
+            //     selectDate = xDate;
+            // }
 
-                xDate.setDate(xDate.getDate() - 3);
-                selectDate = xDate;
-            }
+            // selectDate.setTime( selectDate.getTime() + (data.timezoneOffset*60 + x.getTimezoneOffset()) *60*1000  );
 
             $this.jCal($.extend(data, {day: selectDate}));
             reSelectDates(data._target, selectDate, $(data._target).data('days'), data);
         },
-        reset : function( ) {
+        reset: function () {
             var $this = $(this),
                 data = $this.data('jCal');
 
@@ -78,12 +118,12 @@
 
     $.fn.jCal = function (method) {
 
-        if ( methods[method] ) {
-            return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-            return methods.init.apply( this, arguments );
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-            $.error( 'Метод с именем ' +  method + ' не существует для jQuery.jCal' );
+            $.error('Метод с именем ' + method + ' не существует для jQuery.jCal');
         }
 
         return this;
@@ -93,7 +133,8 @@
         opt = $.extend(defaults, opt);
 
         opt.day = new Date(opt.day.getFullYear(), opt.day.getMonth(), 1);
-        opt.day.setUTCHours(0);
+
+
 
         if (!$(opt._target).data('days')) {
             $(opt._target).data('days', opt.days);
@@ -164,7 +205,7 @@
             '<div class="jCal">' +
             ( (opt.ind == 0) ? '<div class="left" />' : '' ) +
             '<div class="month">' +
-            '<span class="monthYear" data-cal-year="'+opt.day.getFullYear()+'">' + opt.day.getFullYear() + '</span>' +
+            '<span class="monthYear" data-cal-year="' + opt.day.getFullYear() + '">' + opt.day.getFullYear() + '</span>' +
             '<span class="monthName" data-cal-manth="' + opt.day.getMonth() + '">' + opt.ml[opt.day.getMonth()] + '</span>' +
             '</div>' +
             ( (opt.ind == ( opt.showMonths - 1 )) ? '<div class="right" />' : '' ) +
@@ -172,16 +213,16 @@
 
         if (opt.monthSelect) {
             $(target).find('.jCal .monthName, .jCal .monthYear')
-               .on('mouseover', $.extend({}, opt), function (e) {
+                .on('mouseover', $.extend({}, opt), function (e) {
                     $(this).removeClass('monthYearHover monthNameHover');
                     if ($('.jCalMask', e.data._target).length == 0) {
                         $(this).addClass($(this).attr('class') + 'Hover');
                     }
                 })
-               .on('mouseout', function () {
+                .on('mouseout', function () {
                     $(this).removeClass('monthYearHover').removeClass('monthNameHover');
                 })
-               .on('click', $.extend({}, opt), function (e) {
+                .on('click', $.extend({}, opt), function (e) {
 
                     $(e.data._target).stop();
 
@@ -258,7 +299,7 @@
                         } else {
                             $(this).toggleClass('monthSelectHover');
                         }
-                           
+
                     });
 
                     if (typeof opt.drawBack == 'function') {
@@ -351,10 +392,10 @@
                 $(e.data._target).append($('.jCal-footer'));
             }
 
-            if(opt._target.data('selected-day') && opt._target.data('selected-days')) {
+            if (opt._target.data('selected-day') && opt._target.data('selected-days')) {
 
                 $(opt._target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
-                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days') , opt, true);
+                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days'), opt, true);
             }
 
         });
@@ -398,7 +439,6 @@
             }
 
 
-
             var hh = mD.h;
             if (opt.showMonths == 1) {
                 hh -= 0;
@@ -410,7 +450,6 @@
                 '<div class="jCalMask" style="clip:rect(0px ' + mD.w + 'px ' + mD.h + 'px 0px); width:' + ( mD.w + ( mD.w / e.data.showMonths ) ) + 'px; height:' + mD.h + 'px;">' +
                 '<div class="jCalMove"></div>' +
                 '</div>');
-
 
 
             $('.jCalMove', e.data._target)
@@ -448,10 +487,10 @@
                 $(e.data._target).append($('.jCal-footer'));
             }
 
-            if(opt._target.data('selected-day') && opt._target.data('selected-days')) {
+            if (opt._target.data('selected-day') && opt._target.data('selected-days')) {
 
                 $(opt._target).find('.jCalMo .day').removeClass('selectedDay_first selectedDay selectedDay_last');
-                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days') , opt, true);
+                reSelectDates(opt._target, opt._target.data('selected-day'), opt._target.data('selected-days'), opt, true);
             }
 
         });
@@ -477,11 +516,11 @@
             }
 
         }
-        
+
         if (fC && typeof opt.callback == 'function' && !isnCallback) {
             opt.callback(day, days);
         }
-            
+
     }
 
     function setPostDay(opt) {
@@ -490,10 +529,10 @@
         var currentDate = new Date();
         var maxDate = null;
 
-        if(opt.minDate && opt.minDate > currentDate) {
+        if (opt.minDate && opt.minDate > currentDate) {
             currentDate = new Date(opt.minDate);
         }
-        if(opt.maxDate) {
+        if (opt.maxDate) {
             maxDate = new Date(opt.maxDate);
         }
 
@@ -505,9 +544,9 @@
 
         $('.jCalMo').each(function () {
             var $this = $(this);
-            $days =  $this.find('.day');
+            $days = $this.find('.day');
 
-            if($this.find('.monthName') && $this.find('.monthYear')) {
+            if ($this.find('.monthName') && $this.find('.monthYear')) {
                 var iMonth = $this.find('.monthName').data('cal-manth');
                 var iYear = $this.find('.monthYear').data('cal-year');
 
@@ -534,9 +573,9 @@
                 }
 
                 if (maxDate) {
-                    var maxYear =  maxDate.getFullYear();
-                    var maxMonth =  maxDate.getMonth();
-                    var maxDay =  maxDate.getDate();
+                    var maxYear = maxDate.getFullYear();
+                    var maxMonth = maxDate.getMonth();
+                    var maxDay = maxDate.getDate();
 
                     if (iYear > maxYear) {
                         $days.each(function (i) {
@@ -544,12 +583,12 @@
                             $this.addClass('day_past');
                         });
                     } else if (iYear == maxYear) {
-                        if(iMonth > maxMonth) {
+                        if (iMonth > maxMonth) {
                             $days.each(function (i) {
                                 var $this = $(this);
                                 $this.addClass('day_past');
                             });
-                        } else if(iMonth == maxMonth) {
+                        } else if (iMonth == maxMonth) {
                             $days.each(function (i) {
                                 var $this = $(this);
                                 var iDay = +$this.text();
@@ -563,8 +602,6 @@
             }
 
         });
-
-
 
 
     }
@@ -622,7 +659,7 @@
                 var _dayClicked = $(e.target).closest('.day');
                 var _jCalMo = _dayClicked.closest('.jCalMo');
 
-                if(!_jCalMo.next().hasClass('jCalMo') && _dayClicked.nextAll('.day').length < 3) {
+                if (!_jCalMo.next().hasClass('jCalMo') && _dayClicked.nextAll('.day').length < 3) {
 
                     _jCalMo.find('.right').trigger('click');
                 }
@@ -632,7 +669,6 @@
                     .removeClass('selectedDay selectedDay_first selectedDay_last overDay');
                 $('body').append($('.jCal-first-day'));
             }
-
 
 
             for (var di = 0, ds = $(e.data._target).data('days'); di < ds; di++) {
@@ -646,13 +682,13 @@
                 var next1 = currDay.hasClass('day_past');
                 var next2 = currDay.next().hasClass('day_past');
                 var next3 = currDay.next().next().hasClass('day_past');
-                var next4 = currDay.next().next().next().hasClass('day_past') ;
+                var next4 = currDay.next().next().next().hasClass('day_past');
                 var prev1 = currDay.hasClass('day_past');
                 var prev2 = currDay.prev().hasClass('day_past');
                 var prev3 = currDay.prev().prev().hasClass('day_past');
-                var prev4 = currDay.prev().prev().prev().hasClass('day_past') ;
+                var prev4 = currDay.prev().prev().prev().hasClass('day_past');
 
-                if( (!next1 &&  !next2 &&  !next3 &&  !next4) || (!prev1 &&  !prev2 &&  !prev3 &&  !prev4) ) {
+                if ((!next1 && !next2 && !next3 && !next4) || (!prev1 && !prev2 && !prev3 && !prev4)) {
                     if (e.type == 'mouseover') {
 
                         if (di == 0) {
@@ -689,8 +725,17 @@
                         opt._target.data('selected-days', di);
 
                         if (opt.showMonths > 1) {
+
                             e.data.day = osDate;
-                            if (e.data.callback(osDate, di, this)) {
+                            var x = moment(osDate)
+                                .utcOffset(opt.timezoneOffset)
+                                .startOf('day')
+                                .year(osDate.getFullYear())
+                                .month(osDate.getMonth())
+                                .date(osDate.getDate())
+                                .toDate();
+
+                            if (e.data.callback(x, di, this)) {
                                 $(e.data._target).data('day', e.data.day).data('days', di);
                             }
                         }
