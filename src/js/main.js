@@ -48,8 +48,6 @@
             var $this = $(this),
                 data = $this.data('jCal');
 
-            console.log('sssss');
-
             var options = $.extend({_target: this}, inOptions);
 
 
@@ -201,7 +199,6 @@
             var di = $this.data('di');
             opt.day = osDate;
             if (opt.callback(osDate, di)) {
-                console.log('ssaas');
                 $(opt._target).data('day', opt.day).data('days', di);
             }
         });
@@ -211,7 +208,6 @@
     };
 
     function drawCalControl(target, opt) {
-
         $(target).append(
             '<div class="jCal">' +
             ( (opt.ind == 0) ? '<div class="left" />' : '' ) +
@@ -671,7 +667,6 @@
                 var _jCalMo = _dayClicked.closest('.jCalMo');
 
                 if (!_jCalMo.next().hasClass('jCalMo') && _dayClicked.nextAll('.day').length < 3) {
-
                     _jCalMo.find('.right').trigger('click');
                 }
 
@@ -735,21 +730,23 @@
                         opt._target.data('selected-day', osDate);
                         opt._target.data('selected-days', di + 1);
 
-                        if (opt.showMonths > 1) {
+                        e.data.day = osDate;
+                        var x = moment(osDate)
+                            .utcOffset(opt.timezoneOffset)
+                            .startOf('day')
+                            .year(osDate.getFullYear())
+                            .month(osDate.getMonth())
+                            .date(osDate.getDate())
+                            .toDate();
 
-                            e.data.day = osDate;
-                            var x = moment(osDate)
-                                .utcOffset(opt.timezoneOffset)
-                                .startOf('day')
-                                .year(osDate.getFullYear())
-                                .month(osDate.getMonth())
-                                .date(osDate.getDate())
-                                .toDate();
-
-                            if (e.data.callback(x, di, this)) {
-                                $(e.data._target).data('day', e.data.day).data('days', di + 1);
-                            }
+                        if (e.data.callback(x, di, this)) {
+                            $(e.data._target).data('day', e.data.day).data('days', di + 1);
                         }
+
+                        // if (opt.showMonths > 1) {
+                        //
+                        //
+                        // }
                     }
                 }
 
