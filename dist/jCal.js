@@ -458,36 +458,38 @@
                 '<div class="jCalMove"></div>' +
                 '</div>');
 
+            if(e.data._target)  {
+                $('.jCalMove', e.data._target)
+                    .css('opacity', 0.5)
+                    .animate({marginLeft: ( ( mD.w / e.data.showMonths ) * -1 ) + 'px'}, e.data.scrollSpeed, function () {
 
-            $('.jCalMove', e.data._target)
-                .css('opacity', 0.5)
-                .animate({marginLeft: ( ( mD.w / e.data.showMonths ) * -1 ) + 'px'}, e.data.scrollSpeed, function () {
 
+                        $(this).children('.jCalMo:not(:first)')
+                            .appendTo($(e.data._target));
 
-                    $(this).children('.jCalMo:not(:first)')
-                        .appendTo($(e.data._target));
+                        $('.jCalSpace, .jCalMask', e.data._target)
+                            .empty()
+                            .remove();
 
-                    $('.jCalSpace, .jCalMask', e.data._target)
-                        .empty()
-                        .remove();
+                        if ($(e.data._target).data('day')) {
 
-                    if ($(e.data._target).data('day')) {
+                            reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
+                        }
 
-                        reSelectDates(e.data._target, $(e.data._target).data('day'), $(e.data._target).data('days'), e.data);
-                    }
+                        //setPostDay(opt);
 
-                    //setPostDay(opt);
+                        $(this).children('.jCalMo:not(:first)').removeClass('');
 
-                    $(this).children('.jCalMo:not(:first)').removeClass('');
+                        if (typeof opt.drawBack == 'function')
+                            opt.drawBack();
 
-                    if (typeof opt.drawBack == 'function')
-                        opt.drawBack();
+                        if (opt.showMonths == 1) {
+                            $(e.data._target).append($('.jCal-footer'));
+                        }
 
-                    if (opt.showMonths == 1) {
-                        $(e.data._target).append($('.jCal-footer'));
-                    }
+                    });
 
-                });
+            }
 
 
             if (opt.showMonths == 1) {
